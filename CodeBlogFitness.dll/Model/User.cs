@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CodeBlogFitness.dll.Model
-{
+{ 
+    [Serializable]
     /// <summary>
     /// Пользователь.
     /// </summary>
@@ -54,7 +55,7 @@ namespace CodeBlogFitness.dll.Model
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("Имя пользователя не может быть пустым или null.", nameof(name));
 
-            if (Gender == null)
+            if (gender == null)
                 throw new ArgumentNullException("Пол не может быть null.", nameof(gender));
 
             if (birthDate < DateTime.Parse("01.01.1900") || birthDate >= DateTime.Now)

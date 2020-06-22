@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 //Отдельный класс создается для пола с заделом на буюущий уход от консоли
 namespace CodeBlogFitness.dll.Model
 {
+    [Serializable]
     /// <summary>
     /// Пол.
     /// </summary>
-   public class Gender
+    public class Gender
     {
         /// <summary>
         /// Название.
