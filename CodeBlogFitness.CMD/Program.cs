@@ -11,27 +11,66 @@ namespace CodeBlogFitness.CMD
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Вас приветствует приложение CodeBlogFitness");
+            while (true)
+            {
+                Console.WriteLine("Вас приветствует приложение CodeBlogFitness");
 
-            Console.WriteLine("Введите имя польэователя");
-            var name = Console.ReadLine();
+                Console.WriteLine("Введите имя польэователя");
+                var name = Console.ReadLine();
 
-            Console.WriteLine("Введите пол");
-            var gender = Console.ReadLine();
+                //Создаем usercontroller и если пользователь новый,выполняем логику ввода данных с консоли
+                var userController = new UserController(name);
+                if (userController.IsNewUser)//тот самый флаг
+                {
+                    Console.Write("Введите пол: ");
+                    var gender = Console.ReadLine();
+                    var birthDate = ParseDate();
+                    var weight = ParseDouble("Вес");//методы определены, чтобы не повторять код
+                    var height = ParseDouble("Рост");
 
-            Console.WriteLine("Введите дату рождения");
-            var birthDate = DateTime.Parse(Console.ReadLine());
+                    //создаем нового пользователя
+                    userController.SetNewUserData(gender, birthDate, weight, height);
+                }
+            }
+            
+        }
 
-            Console.WriteLine("Введите вec");
-            var weight = double.Parse(Console.ReadLine());
+        //метод для парсинга даты из консоли 
+        /// <summary>
+        /// Парсинг данных из консоли
+        /// </summary>
+        /// <returns> Дата рождения.</returns>
+        private static DateTime ParseDate()
+        {
+            DateTime birthDate;
+            while (true)
+            {
+                Console.Write("Введите дату рождения в формате (dd.MM.yyyy): ");
+                if (DateTime.TryParse(Console.ReadLine(), out birthDate))
+                    return birthDate;
+                else
+                    Console.WriteLine("Неверный формат даты рождения");
+            }
+        }
 
-            Console.WriteLine("Введите рост");
-            var height = double.Parse(Console.ReadLine());
-
-            var userController = new UserController(name, gender, birthDate, weight, height);
-            userController.Save();
-
+        //метод для парсинга из консоли в дабл для веса и роста
+        /// <summary>
+        /// Парсинг данных из консоли.
+        /// </summary>
+        /// <param name="name">Вес или Рост</param>
+        /// <returns></returns>
+        private static double ParseDouble(string name)
+        {
+            while (true)
+            {
+                Console.Write($"Введите {name}: ");
+                if (double.TryParse(Console.ReadLine(), out double value))
+                    return value;
+                else
+                    Console.WriteLine($"Неверный формат {name}a");
+            }
 
         }
     }
 }
+

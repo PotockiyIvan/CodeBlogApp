@@ -16,23 +16,87 @@ namespace CodeBlogFitness.dll.Controller
     public class UserController
     {
         /// <summary>
-        /// Пользователь приложения.
+        /// Список пользователей приложения.
         /// </summary>
-        public User User { get; }
+        /// Создаем список пользователей
+        public List<User> Users { get; }
+
+        /// <summary>
+        /// Текущий пользователь приложения.
+        /// </summary>
+        public User CurrentUser { get; }
+
+        //проверка(флаг) новый ли пользователь,если нет ,не используем,если да,то в конструкторе
+        //присваеваем true и потом в мейне мы сможем используя это поле в if конструкции запросить
+        //доп данные
+        public bool IsNewUser { get; } = false;
+
         /// <summary>
         /// Создание нового контроллера пользователя.
         /// </summary>
         /// <param name="user">Пользователь.</param>
-        public UserController(
-            string userName,
-            string genderName,
-            DateTime birthDay,
-            double weight,
-            double height)
+        public UserController(string userName)
         {
-            var gender = new Gender(genderName);
-            User = new User(userName, gender, birthDay, weight, height);
+            if (string.IsNullOrWhiteSpace(userName))
+                throw new ArgumentNullException("Имя пользователя не может быть пустым", nameof(userName));
+            
+            Users = GetUserData();
+            //Поиск нужного пользователя
+            CurrentUser = Users.SingleOrDefault(u => u.Name == userName);
+
+            //Если пользователь не найден,создаем нового.
+            if (CurrentUser == null)
+            {
+                CurrentUser = new User(userName);
+                IsNewUser = true;//флаг - так как пользователь новый(мы же в конструкторе),ставим true
+                Users.Add(CurrentUser);//добавляем в коллекцию
+            }
+            else
+                Console.WriteLine(CurrentUser.ToString());
         }
+
+        //здесь будет десериализация,тоесть запись состояния в объекты
+        /// <summary>
+        /// Получить сохраненный список пользователей приложения.
+        /// </summary>
+        /// <returns></returns>
+        private List<User> GetUserData()
+        {
+            var formatter = new BinaryFormatter();
+
+            using (var fs = new FileStream("users.dat", FileMode.OpenOrCreate))
+            {
+                //Если получилось загрузить список - возвращаем его
+                //Если нет - мы возвращаем пустой список
+                if (fs.Length > 0 && formatter.Deserialize(fs) is List<User> users)
+                    return users;
+                else
+                    return new List<User>();
+            }
+
+        }
+        
+        /// <summary>
+        /// Добавление новго пользователя.
+        /// </summary>
+        /// <param name="genderName">Пол.</param>
+        /// <param name="birthDate">Дата рождения.</param>
+        /// <param name="weight">Вес.</param>
+        /// <param name="height">Рост.</param>
+        public void SetNewUserData(string genderName,//Метод нужный для создания нового пользователя,чтобы инкапсулировать логику он определен
+            DateTime birthDate,                      //в контроллере а не классе User или методе Main
+            double weight = 1,
+            double height = 1)
+        {
+            //здесь будет проверка
+            //Присваиваем данные и сохраняем
+            CurrentUser.Gender = new Gender(genderName);
+            CurrentUser.BirthDate = birthDate;
+            CurrentUser.Weight = weight;
+            CurrentUser.Height = height;
+            Save();
+        }
+
         /// <summary>
         /// Сохранить данные пользователя.
         /// </summary>
@@ -57,36 +121,11 @@ namespace CodeBlogFitness.dll.Controller
                 //хотим сериализовать,у класса нужно прописать атрибут [Serializable],можно как
                 //у всего класса так и у отдельных полей,свойств,методов.
                 #endregion
-                formatter.Serialize(fs, User);
+                formatter.Serialize(fs, Users);
             }
 
         }
-        //здесь будет десериализация,тоесть запись состояния в объекты
 
-        public UserController()
-        {
-            var formatter = new BinaryFormatter();
 
-            using (var fs = new FileStream("users.dat", FileMode.OpenOrCreate))
-            {
-                //Возвращаем данные,если их не будет - вернем null.
-                if (formatter.Deserialize(fs) is User user)
-                    User = user;
-            }
-            // TODO: Что делать , если пользователя не прочитали.
-        }
-
-        //Это другой вариант записи,не через консруктор и создание экземпляра класса
-        //а через передачу информации из файла в качестве экдемпляра класса.
-        //public User Load()
-        //{
-        //    var formatter = new BinaryFormatter();
-
-        //    using (var fs = new FileStream("users.dat", FileMode.OpenOrCreate))
-        //    {
-        //       //Возвращаем данные,если их не будет - вернем null.
-        //        return formatter.Deserialize(fs) as User;                               
-        //    }
-        //}
     }
 }

@@ -17,15 +17,15 @@ namespace CodeBlogFitness.dll.Model
         /// Имя.
         /// </summary>
         public string Name { get; }//имя пользователя можно будет установить лишь раз 
-                                   //при создании экземпляра класса так как сеттера нет.
+                                   //при создании экземпляра класса так как сеттера нет,инкапсуляция все дела
         /// <summary>
         /// Пол.
         /// </summary>
-        public Gender Gender { get; }//так же и здесь,для избежания ошибок. 
+        public Gender Gender { get; set; }
         /// <summary>
         /// Дата рождения.
         /// </summary>
-        public DateTime BirthDate { get; }
+        public DateTime BirthDate { get; set; }
         /// <summary>
         /// Вес.
         /// </summary>
@@ -34,8 +34,16 @@ namespace CodeBlogFitness.dll.Model
         /// Рост.
         /// </summary>
         public double Height { get; set; }
-        #endregion
 
+        public int Age { get { return DateTime.Now.Year - BirthDate.Year; } }//Автосвойство вычисляющее возраст
+        #endregion
+        //Конструктор только с именем
+        public User(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException("Имя пользователя не может быть пустым или null.", nameof(name));
+            Name = name;
+        }
         //В конструкторе организовывается проверка данных введенных пользователем,при некоректности данных выкидываем исключения.
         /// <summary>
         /// Создать нового пользователя.
@@ -76,7 +84,7 @@ namespace CodeBlogFitness.dll.Model
         }
         public override string ToString()//снова переопределяем ToString.
         {
-            return Name;
+            return Name + " " + Age;
         }
     }
 }
