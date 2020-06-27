@@ -13,8 +13,11 @@ namespace CodeBlogFitness.dll.Controller
     /// <summary>
     /// Контроллер пользователя.
     /// </summary>
-    public class UserController
+    public class UserController : ControllerBase
     {
+        //Константа нужная для рефакторинга,представляет имя документа для сериализации и десериализации.
+        private const string USERS_FILE_NAME = "users.dat";
+
         /// <summary>
         /// Список пользователей приложения.
         /// </summary>
@@ -55,27 +58,6 @@ namespace CodeBlogFitness.dll.Controller
                 Console.WriteLine(CurrentUser.ToString());
         }
 
-        //здесь будет десериализация,тоесть запись состояния в объекты
-        /// <summary>
-        /// Получить сохраненный список пользователей приложения.
-        /// </summary>
-        /// <returns></returns>
-        private List<User> GetUserData()
-        {
-            var formatter = new BinaryFormatter();
-
-            using (var fs = new FileStream("users.dat", FileMode.OpenOrCreate))
-            {
-                //Если получилось загрузить список - возвращаем его
-                //Если нет - мы возвращаем пустой список
-                if (fs.Length > 0 && formatter.Deserialize(fs) is List<User> users)
-                    return users;
-                else
-                    return new List<User>();
-            }
-
-        }
-        
         /// <summary>
         /// Добавление новго пользователя.
         /// </summary>
@@ -96,36 +78,66 @@ namespace CodeBlogFitness.dll.Controller
             CurrentUser.Height = height;
             Save();
         }
-
         /// <summary>
-        /// Сохранить данные пользователя.
+        /// Сохранить пользователя.
         /// </summary>
-        public void Save()// можно было прописать возвращаемый тип bool и проверять прошла ли
-                          //запись успешно,а так если не удастся сохранить мы получим exception
+        private void Save()
         {
-            #region Комментарии
-            //Созданный экземпляр класса BinaryFormatter нужен для преобразования обьектов в
-            //Байтовый поток данных для сохранения их в виде метаданных в файле в постоянной
-            //памяти(все обьекты в процессе выполнения хранятся в оперативной памяти)
-            //это и есть сериализация.
-            #endregion
-            var formatter = new BinaryFormatter();
-
-            //здeсь мы делвем запись в файл,создаем поток ,передаем ему название для нашего файла
-            //и метод,в данном случае OpenOrCreate либо откроет либо создаст нужный файл.            
-            using (var fs = new FileStream("users.dat", FileMode.OpenOrCreate))
-            {
-                #region Комментарии
-                //это непосредственно сериализация,у экземпляра класса BinaryFormatter вызываем 
-                //метод Serialize и передаем в качестве параметров наш поток fs и класс который
-                //хотим сериализовать,у класса нужно прописать атрибут [Serializable],можно как
-                //у всего класса так и у отдельных полей,свойств,методов.
-                #endregion
-                formatter.Serialize(fs, Users);
-            }
-
+            base.Save(USERS_FILE_NAME, Users);
         }
 
+        /// <summary>
+        /// Получить пользователя.
+        /// </summary>
+        /// <returns> Список пользователей. </returns>
+        private  List<User> GetUserData()
+        {
+            return base.Load<List<User>>(USERS_FILE_NAME) ?? new List<User>();
+        }
 
+        #region Первоначальная реализация сериализации и десериализации без ControllerBAse
+        //private List<User> GetUserData()
+        //{
+        //    var formatter = new BinaryFormatter();
+
+        //    using (var fs = new FileStream("users.dat", FileMode.OpenOrCreate))
+        //    {
+        //        //Если получилось загрузить список - возвращаем его
+        //        //Если нет - мы возвращаем пустой список
+        //        if (fs.Length > 0 && formatter.Deserialize(fs) is List<User> users)
+        //            return users;
+        //        else
+        //            return new List<User>();
+        //    }
+
+        //}
+
+        //public void Save()// можно было прописать возвращаемый тип bool и проверять прошла ли
+        //                  //запись успешно,а так если не удастся сохранить мы получим exception
+        //{
+        //    #region Комментарии
+        //    //Созданный экземпляр класса BinaryFormatter нужен для преобразования обьектов в
+        //    //Байтовый поток данных для сохранения их в виде метаданных в файле в постоянной
+        //    //памяти(все обьекты в процессе выполнения хранятся в оперативной памяти)
+        //    //это и есть сериализация.
+        //    #endregion
+        //    var formatter = new BinaryFormatter();
+
+        //    //здeсь мы делвем запись в файл,создаем поток ,передаем ему название для нашего файла
+        //    //и метод,в данном случае OpenOrCreate либо откроет либо создаст нужный файл.            
+        //    using (var fs = new FileStream("users.dat", FileMode.OpenOrCreate))
+        //    {
+        //        #region Комментарии
+        //        //это непосредственно сериализация,у экземпляра класса BinaryFormatter вызываем 
+        //        //метод Serialize и передаем в качестве параметров наш поток fs и класс который
+        //        //хотим сериализовать,у класса нужно прописать атрибут [Serializable],можно как
+        //        //у всего класса так и у отдельных полей,свойств,методов.
+        //        #endregion
+        //        formatter.Serialize(fs, Users);
+        //    }
+        #endregion
     }
+
+
 }
+
