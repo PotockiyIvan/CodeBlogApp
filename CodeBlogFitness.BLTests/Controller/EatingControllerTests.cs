@@ -16,8 +16,8 @@ namespace CodeBlogFitness.dll.Controller.Tests
         public void AddTest()
         {
             //Arrange(Обьявление)
-            var userName = "Жора3";
-            var foodName = "Еда2";
+            var userName = "Жора";
+            var foodName = "Еда";
             var rnd = new Random();
             var userController = new UserController(userName);
             var eatingController = new EatingController(userController.CurrentUser);

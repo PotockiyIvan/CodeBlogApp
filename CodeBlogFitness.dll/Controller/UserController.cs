@@ -15,7 +15,7 @@ namespace CodeBlogFitness.dll.Controller
     /// </summary>
     public class UserController : ControllerBase
     {
-        //Константа нужная для рефакторинга,представляет имя документа для сериализации и десериализации.
+        //Константа представляет имя документа для сериализации и десериализации.
         private const string USERS_FILE_NAME = "users.dat";
 
         /// <summary>
@@ -66,9 +66,9 @@ namespace CodeBlogFitness.dll.Controller
         /// <param name="weight">Вес.</param>
         /// <param name="height">Рост.</param>
         public void SetNewUserData(string genderName,//Метод нужный для создания нового пользователя,чтобы инкапсулировать логику он определен
-            DateTime birthDate,                      //в контроллере а не классе User или методе Main
-            double weight = 1,
-            double height = 1)
+                                   DateTime birthDate,//в контроллере а не классе User или методе Main
+                                   double weight = 1,
+                                   double height = 1)
         {
             //здесь будет проверка
             //Присваиваем данные и сохраняем

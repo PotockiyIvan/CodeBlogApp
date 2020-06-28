@@ -1,7 +1,9 @@
 ﻿using CodeBlogFitness.dll.Controller;
 using CodeBlogFitness.dll.Model;
 using System;
-
+using CodeBlogFitness.CMD.languages;
+using System.Globalization;
+using System.Resources;
 
 namespace CodeBlogFitness.CMD
 {
@@ -11,16 +13,21 @@ namespace CodeBlogFitness.CMD
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Вас приветствует приложение CodeBlogFitness");
-
-            Console.WriteLine("Введите имя польэователя");
+            //Культура - это языковая настройка,включает в себя: какой язык использовать
+            //как отображать время,какой знак разделения у дробей и так далее
+            var culture = CultureInfo.CreateSpecificCulture("ru-ru");
+            //Менеджер ресурсов - 1 аргумент - корневое имя файла с ресурсом без расширения,2 аргумент - наша сборка(Главный класс приложения - Programm).
+            var resourceManager = new ResourceManager("CodeBlogFitness.CMD.languages.Messages_ru-ru", typeof(Program).Assembly);
+            //Теперь мы вызываем строки из файла ресурсов,все это нужно для локализации на разные языки.
+            Console.WriteLine(resourceManager.GetString("Hello",culture));
+            Console.WriteLine(resourceManager.GetString("EnterName",culture));
             var name = Console.ReadLine();
 
-            //Создаем usercontroller и если пользователь новый,выполняем логику ввода данных с консоли
+            //Создаем usercontroller и если пользователь новый,выполняем логику ввода данных пользователя с консоли
             var userController = new UserController(name);
             if (userController.IsNewUser)//тот самый флаг
             {
-                Console.Write("Введите пол: ");
+                Console.Write(resourceManager.GetString("EnterGender", culture));
                 var gender = Console.ReadLine();
                 var birthDate = ParseDate();
                 var weight = ParseDouble("Вес");//методы определены, чтобы не повторять код
@@ -31,7 +38,7 @@ namespace CodeBlogFitness.CMD
             }
             
 
-            //Создаем eatingcontroller и выполняем логику ввода данных с консоли
+            //Создаем eatingcontroller и выполняем логику ввода данных приемов пищи и продуктов питания с консоли
             var eatingController = new EatingController(userController.CurrentUser);
             Console.WriteLine("Что вы хотите сделать?");
             Console.WriteLine("1. Ввести прием пищи");
@@ -54,7 +61,8 @@ namespace CodeBlogFitness.CMD
         private static (Food Food,double Weight) EnterEating()//КОРТЕЖИ - интересное именование!!!
         {
             Console.Write("Введите название продукта: ");
-            var food = Console. ReadLine();            
+            var food = Console. ReadLine();
+            //РАЗБОРКА ВОТ ТУТ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             var calories =      ParseDouble("калорийность");
             var proteins =      ParseDouble("кол-во белков");
             var fats =          ParseDouble("кол-во жиров");

@@ -14,7 +14,7 @@ namespace CodeBlogFitness.dll.Controller
     /// </summary>
     public class EatingController : ControllerBase
     {
-        //Константа нужная для рефакторинга,представляет имя документа для сериализации и десериализации.
+        //Константа представляет имя документа для сериализации и десериализации.
         private const string FOODS_FILE_NAME = "foods.dat";
         private const string EATINGS_FILE_NAME = "eatings.dat";
 

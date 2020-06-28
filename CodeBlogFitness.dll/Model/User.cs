@@ -76,11 +76,11 @@ namespace CodeBlogFitness.dll.Model
                 throw new ArgumentException("Рост не может быть меньше либо равен нулю.", nameof(height));
             #endregion //используется регион,для сокрытия куска кода для удобства.
 
-            Name = name;
-            Gender = gender;
+            Name =      name;
+            Gender =    gender;
             BirthDate = birthDate;
-            Weight = weight;
-            Height = height;
+            Weight =    weight;
+            Height =    height;
         }
         public override string ToString()//снова переопределяем ToString.
         {
