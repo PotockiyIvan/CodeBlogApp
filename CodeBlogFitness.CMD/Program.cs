@@ -19,49 +19,97 @@ namespace CodeBlogFitness.CMD
             //Менеджер ресурсов - 1 аргумент - корневое имя файла с ресурсом без расширения,2 аргумент - наша сборка(Главный класс приложения - Programm).
             var resourceManager = new ResourceManager("CodeBlogFitness.CMD.languages.Messages_ru-ru", typeof(Program).Assembly);
             //Теперь мы вызываем строки из файла ресурсов,все это нужно для локализации на разные языки.
-            Console.WriteLine(resourceManager.GetString("Hello",culture));
-            Console.WriteLine(resourceManager.GetString("EnterName",culture));
+            Console.WriteLine(resourceManager.GetString("Hello", culture));
+            Console.WriteLine(resourceManager.GetString("EnterName", culture));
             var name = Console.ReadLine();
 
+            #region комментарии к созданию контроллеров
             //Создаем usercontroller и если пользователь новый,выполняем логику ввода данных пользователя с консоли
-            var userController = new UserController(name);
+            //Создаем eatingcontroller и выполняем логику ввода данных приемов пищи и продуктов питания с консоли
+            //Создаем exerciseController и выолняем логику ввода данных активности
+            #endregion
+
+            var userController = new UserController(name);           
+            var eatingController = new EatingController(userController.CurrentUser);
+            var exerciseController = new ExerciseController(userController.CurrentUser);
+
+            
             if (userController.IsNewUser)//тот самый флаг
             {
                 Console.Write(resourceManager.GetString("EnterGender", culture));
-                var gender = Console.ReadLine();
-                var birthDate = ParseDate();
-                var weight = ParseDouble("Вес");//методы определены, чтобы не повторять код
-                var height = ParseDouble("Рост");
+                var gender =    Console.ReadLine();
+                var birthDate = ParseDate("дата рождения");
+                var weight =    ParseDouble("Вес");//методы определены, чтобы не повторять код
+                var height =    ParseDouble("Рост");
 
                 //создаем нового пользователя
                 userController.SetNewUserData(gender, birthDate, weight, height);
             }
-            
 
-            //Создаем eatingcontroller и выполняем логику ввода данных приемов пищи и продуктов питания с консоли
-            var eatingController = new EatingController(userController.CurrentUser);
-            Console.WriteLine("Что вы хотите сделать?");
-            Console.WriteLine("1. Ввести прием пищи");
-            var command = Convert.ToInt32(Console.ReadLine());
-
-            switch (command)
+            while (true)
             {
-                case 1:
-                    var foods =EnterEating();
-                    eatingController.Add(foods.Food, foods.Weight);//КОРТЕЖИ - Интересное именование!!!
-                    foreach(var item in eatingController.Eating.Foods)
-                        Console.WriteLine($"\t{item.Key} - {item.Value}");
+                Console.WriteLine("Что вы хотите сделать?");
+                Console.WriteLine("1. Добавить прием пищи \t 2.Добавить упражнение");
+                var command = Convert.ToInt32(Console.ReadLine());
 
-                    break;
-                default:
-                    break;
+                switch (command)
+                {
+                    case 1:
+                        var foods = EnterEating();
+                        eatingController.Add(foods.Food, foods.Weight);//КОРТЕЖИ - Интересное именование!!!
+                        foreach (var item in eatingController.Eating.Foods)
+                            Console.WriteLine($"\t{item.Key} - {item.Value}");
+                        break;
+
+                    case 2:
+                        var exe = EnterExercise();
+                        exerciseController.Add(exe.activity, exe.start, exe.finish);
+                        foreach(var item in exerciseController.Exercises)
+                            Console.WriteLine($"\t{item.Activity} с {item.Start.ToShortTimeString()} до {item.Finish.ToShortTimeString()}");
+                        break;
+
+                    case 3:
+                        break;
+                    default:
+                        break;
+                }
             }
+        }
+        //Изначально метод возвращал Exercise и последней строкой было
+        //return new Exercise(start, finish, activity, UserController.CurrentUser);
+        //но,так как в статическом методе мы не можем использовать созданный userController 
+        //из-за ограничения области видимости,мы опять будем возвращать кортеж в виде
+        //(DateTime start,DateTime finish, Activity activity)
+        //Благодаре этому сверху в свитче мы можем передать в качестве аргументов данные через свойста созданного экземпляра
+        //var exe = EnterExercise();
+        //exerciseController.Add(exe.activity, exe.start, exe.finish);
+        /// <summary>
+        /// Добавить упражнение.
+        /// </summary>
+        /// <returns></returns>
+        private static (DateTime start,DateTime finish, Activity activity) EnterExercise()
+        {
+            Console.Write("Введите название упражнения: ");
+
+            var exerciseName = Console.ReadLine();
+            var energy = ParseDouble("расход энергии в минуту");              
+            var start =  ParseDate("Время начала упражнения");
+            var finish = ParseDate("Время конца упражнения");
+
+            var activity = new Activity(exerciseName, energy);
+
+            return (start, finish, activity);
 
         }
-        private static (Food Food,double Weight) EnterEating()//КОРТЕЖИ - интересное именование!!!
+
+        /// <summary>
+        /// Добавить прием пищи.
+        /// </summary>
+        /// <returns></returns>
+        private static (Food Food, double Weight) EnterEating()//КОРТЕЖИ - интересное именование!!!
         {
             Console.Write("Введите название продукта: ");
-            var food = Console. ReadLine();
+            var food = Console.ReadLine();
             //РАЗБОРКА ВОТ ТУТ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             var calories =      ParseDouble("калорийность");
             var proteins =      ParseDouble("кол-во белков");
@@ -74,25 +122,23 @@ namespace CodeBlogFitness.CMD
             return (product, weight);
         }
 
-        //метод для парсинга даты из консоли 
         /// <summary>
         /// Парсинг данных из консоли
         /// </summary>
         /// <returns> Дата рождения.</returns>
-        private static DateTime ParseDate()
+        private static DateTime ParseDate(string value)
         {
             DateTime birthDate;
             while (true)
             {
-                Console.Write("Введите дату рождения в формате (dd.MM.yyyy): ");
+                Console.Write($"Введите {value} (dd.MM.yyyy): ");
                 if (DateTime.TryParse(Console.ReadLine(), out birthDate))
                     return birthDate;
                 else
-                    Console.WriteLine("Неверный формат даты рождения");
+                    Console.WriteLine($"Неверный формат {value}");
             }
         }
-
-        //метод для парсинга из консоли в дабл для веса и роста
+ 
         /// <summary>
         /// Парсинг данных из консоли.
         /// </summary>

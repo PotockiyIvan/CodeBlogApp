@@ -44,19 +44,16 @@ namespace CodeBlogFitness.dll.Controller
         /// <param name="weight"> Вес Продукта.</param>
         public void Add(Food food, double weight)
         {
-            //проверка на всякий случай
             var product = Foods.SingleOrDefault(f => f.Name == food.Name);
             if (product == null)
             {
                 Foods.Add(food);
-                Eating.Add(food, weight);
-                Save();
+                Eating.Add(food, weight);              
             }
-            else
-            {
-                Eating.Add(product, weight);
-                Save();
-            }
+            else            
+                Eating.Add(product, weight);              
+            
+            Save();
         }
 
         /// <summary>
