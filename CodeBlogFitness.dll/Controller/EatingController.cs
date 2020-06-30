@@ -1,4 +1,5 @@
-﻿using CodeBlogFitness.dll.Model;
+﻿using CodeBlogFitness.BL.Controller;
+using CodeBlogFitness.dll.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,9 +15,6 @@ namespace CodeBlogFitness.dll.Controller
     /// </summary>
     public class EatingController : ControllerBase
     {
-        //Константа представляет имя документа для сериализации и десериализации.
-        private const string FOODS_FILE_NAME = "foods.dat";
-        private const string EATINGS_FILE_NAME = "eatings.dat";
 
         private readonly User user;
         /// <summary>
@@ -62,8 +60,8 @@ namespace CodeBlogFitness.dll.Controller
         /// </summary>
         private void Save()
         {
-            base.Save(EATINGS_FILE_NAME, Eating);
-            base.Save(FOODS_FILE_NAME, Foods);
+            Save(Foods);
+            Save(new List<Eating>() { Eating });
         }
         /// <summary>
         /// Получить прием пищи.
@@ -71,7 +69,7 @@ namespace CodeBlogFitness.dll.Controller
         /// <returns> Список продуктов.</returns>
         private Eating GetEating()
         {
-            return base.Load<Eating>(EATINGS_FILE_NAME) ?? new Eating(user);
+            return Load<Eating>().FirstOrDefault() ?? new Eating(user);
         }
 
         /// <summary>
@@ -80,7 +78,7 @@ namespace CodeBlogFitness.dll.Controller
         /// <returns> Список продуктов.</returns>
         private List<Food> GetAllFoods()
         {
-            return base.Load<List<Food>>(FOODS_FILE_NAME) ?? new List<Food>();
+            return Load<Food>() ?? new List<Food>();
         }
 
     }

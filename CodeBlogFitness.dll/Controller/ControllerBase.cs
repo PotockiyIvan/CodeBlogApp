@@ -1,48 +1,27 @@
-﻿using System;
+﻿using CodeBlogFitness.dll.Controller;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CodeBlogFitness.dll.Controller
+
+namespace CodeBlogFitness.BL.Controller
 {
-    //Класс нужный для обобщения логики сереализации и дисериализации,чтобы избежать повторения кода
-    //В классе usercontroller закоменчена старая реализация
     public abstract class ControllerBase
     {
-        /// <summary>
-        /// Сохранить данные.
-        /// </summary>
-        /// <param name="filename">Имя файла для сериализации.</param>
-        /// <param name="item">Объект сериализации.</param>
-        protected void Save(string filename,object item )
-        {
-            var formatter = new BinaryFormatter();
+        //manager является экземпляром класса IDataSaver ,а значит  в него мы
+        //сможем подставить любой экземпляр реализующий этот интерфейс
+        //Если заменить SerializableSaver на Databasesaver , мы будем 
+        //сохранять данные не в текстовой файл а в базу данных
+        private readonly IDataSaver manager = new SerializableSaver();
 
-            using (var fs = new FileStream(filename, FileMode.OpenOrCreate))
-            {
-                formatter.Serialize(fs, item);
-            }
+        protected void Save<T>(List<T> item) where T : class
+        {
+            manager.Save(item);
         }
-        /// <summary>
-        /// Получить данные.
-        /// </summary>
-        /// <typeparam name="T"> Получаемые данные.</typeparam>
-        /// <param name="filename"> Имя файла для десериализации.</param>
-        /// <returns> List Users или List Foods. </returns>
-        protected T Load<T>(string filename)
-        {
-            var formatter = new BinaryFormatter();
 
-            using (var fs = new FileStream(filename, FileMode.OpenOrCreate))
-            {
-                if (fs.Length > 0 && formatter.Deserialize(fs) is T items)
-                    return items;
-                else
-                    return default(T);
-            }
+        protected List<T> Load<T>() where T : class
+        {
+            return manager.Load<T>();
         }
     }
 }
+
+//https://youtu.be/pRccKqC5D10?t=409 Момент в видео с объяснением

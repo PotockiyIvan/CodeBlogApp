@@ -1,4 +1,5 @@
-﻿using CodeBlogFitness.dll.Model;
+﻿using CodeBlogFitness.BL.Controller;
+using CodeBlogFitness.dll.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,6 @@ namespace CodeBlogFitness.dll.Controller
 {
     public class ExerciseController : ControllerBase
     {
-        private const string EXERCISES_FILE_NAME = "exercises.dat";
-        private const string ACTIVITIES_FILE_NAME = "activities.dat";
-
         /// <summary>
         /// Пользователь.
         /// </summary>
@@ -63,7 +61,7 @@ namespace CodeBlogFitness.dll.Controller
         /// <returns></returns>
         private List<Exercise> GetAllExercises()
         {
-            return base.Load<List<Exercise>>(EXERCISES_FILE_NAME) ?? new List<Exercise>();
+            return Load<Exercise>() ?? new List<Exercise>();
         }
 
         /// <summary>
@@ -72,7 +70,7 @@ namespace CodeBlogFitness.dll.Controller
         /// <returns></returns>
         private List<Activity> GetAllActivities()
         {
-            return base.Load<List<Activity>>(ACTIVITIES_FILE_NAME) ?? new List<Activity>();
+            return Load<Activity>() ?? new List<Activity>();
         }
 
         /// <summary>
@@ -80,8 +78,8 @@ namespace CodeBlogFitness.dll.Controller
         /// </summary>
         private void Save()
         {
-            base.Save(EXERCISES_FILE_NAME, Exercises);
-            base.Save(ACTIVITIES_FILE_NAME, Activities);
+            Save(Exercises);
+            Save(Activities);
 
         }
     }

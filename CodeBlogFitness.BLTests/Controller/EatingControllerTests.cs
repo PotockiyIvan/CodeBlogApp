@@ -1,39 +1,32 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CodeBlogFitness.dll.Controller;
+﻿using CodeBlogFitness.dll.Controller;
+using CodeBlogFitness.dll.Model;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CodeBlogFitness.dll.Model;
 
-namespace CodeBlogFitness.dll.Controller.Tests
+namespace CodeBlogFitness.BLTests.Controller
 {
-    [TestClass()]
     public class EatingControllerTests
     {
         [TestMethod()]
         public void AddTest()
         {
-            //Arrange(Обьявление)
+            // Arrange
             var userName = Guid.NewGuid().ToString();
             var foodName = Guid.NewGuid().ToString();
             var rnd = new Random();
             var userController = new UserController(userName);
-            var eatingController = new EatingController(userController.CurrentUser);
-            var food = new Food(foodName,
-                                rnd.Next(50, 100),
-                                rnd.Next(50, 100),
-                                rnd.Next(50, 100),
-                                rnd.Next(50, 100));
+            var eatingConroller = new EatingController(userController.CurrentUser);
+            var food = new Food(foodName, rnd.Next(50, 500), rnd.Next(50, 500), rnd.Next(50, 500), rnd.Next(50, 500));
 
-            // Act(Действие)
-            eatingController.Add(food, 200);
+            // Act
+            eatingConroller.Add(food, 100);
 
-            //Assert(Проверка)            
-            Assert.AreEqual(food.Name, eatingController.Eating.Foods.First().Key.Name);
-
-
+            // Assert
+            Assert.AreEqual(food.Name, eatingConroller.Eating.Foods.First().Key.Name);
         }
     }
 }

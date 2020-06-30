@@ -12,18 +12,25 @@ namespace CodeBlogFitness.dll.Model
     /// </summary>
     public class Eating
     {
+        //Индентификатор для внедрения entity framework
+        public int Id { get; set; }
+
         /// <summary>
         /// Время приема пищи.
         /// </summary>
-        public DateTime Moment { get; }
+        public DateTime Moment { get; set; }
         /// <summary>
         /// Прием пищи.
         /// </summary>
-        public Dictionary<Food,double> Foods { get; }//Список словарь ключ(Food) - какая еда ,значение(double) - сколько еды
+        public Dictionary<Food,double> Foods { get; set; }//Список словарь ключ(Food) - какая еда ,значение(double) - сколько еды
+
+        //Чтото для entity framework
+        public int UserId { get; set; }
+
         /// <summary>
         /// Пользователь.
         /// </summary>
-        public User User { get; }
+        public virtual User User { get; set; }
 
         public Eating(User user)
         {

@@ -5,6 +5,8 @@ using CodeBlogFitness.CMD.languages;
 using System.Globalization;
 using System.Resources;
 
+//https://youtu.be/PCDuxxKBEc0?t=1661 ПОДКЛЮЧЕНИЕ ENTITY FRAMEWORK
+//https://youtu.be/PCDuxxKBEc0?t=3274 ОБЯСНЕНИЕ МОДЕЛИ ПРИЛОЖЕНИЯ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 namespace CodeBlogFitness.CMD
 {
     //Приложение консольное но с заделом на интеграцию,здесь будет 
@@ -28,9 +30,9 @@ namespace CodeBlogFitness.CMD
             //Создаем eatingcontroller и выполняем логику ввода данных приемов пищи и продуктов питания с консоли
             //Создаем exerciseController и выолняем логику ввода данных активности
             #endregion
-
-            var userController = new UserController(name);           
-            var eatingController = new EatingController(userController.CurrentUser);
+              
+            var userController =     new UserController(name);           
+            var eatingController =   new EatingController(userController.CurrentUser);
             var exerciseController = new ExerciseController(userController.CurrentUser);
 
             
@@ -90,8 +92,8 @@ namespace CodeBlogFitness.CMD
         private static (DateTime start,DateTime finish, Activity activity) EnterExercise()
         {
             Console.Write("Введите название упражнения: ");
-
             var exerciseName = Console.ReadLine();
+
             var energy = ParseDouble("расход энергии в минуту");              
             var start =  ParseDate("Время начала упражнения");
             var finish = ParseDate("Время конца упражнения");
@@ -99,7 +101,6 @@ namespace CodeBlogFitness.CMD
             var activity = new Activity(exerciseName, energy);
 
             return (start, finish, activity);
-
         }
 
         /// <summary>

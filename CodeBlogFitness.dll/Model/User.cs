@@ -12,12 +12,15 @@ namespace CodeBlogFitness.dll.Model
     /// </summary>
     public class User
     {
+        //Индентификатор для внедрения entity framework
+        public int Id { get; set; }
+
         #region Свойства.
         /// <summary>
         /// Имя.
         /// </summary>
-        public string Name { get; }//имя пользователя можно будет установить лишь раз 
-                                   //при создании экземпляра класса так как сеттера нет,инкапсуляция все дела
+        public string Name { get; set; }//имя пользователя можно будет установить лишь раз 
+                                        //при создании экземпляра класса так как сеттера нет,инкапсуляция все дела         ,но потом добавили из за entity framework
         /// <summary>
         /// Пол.
         /// </summary>
@@ -37,6 +40,12 @@ namespace CodeBlogFitness.dll.Model
 
         public int Age { get { return DateTime.Now.Year - BirthDate.Year; } }//Автосвойство вычисляющее возраст
         #endregion
+
+        public virtual ICollection<Eating> Eatings { get; set; }
+        public virtual ICollection<Exercise> Exercises { get; set; }
+
+        public User() { }
+
         //Конструктор только с именем
         public User(string name)
         {

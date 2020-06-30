@@ -1,4 +1,5 @@
-﻿using CodeBlogFitness.dll.Model;
+﻿using CodeBlogFitness.BL.Controller;
+using CodeBlogFitness.dll.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,9 +16,6 @@ namespace CodeBlogFitness.dll.Controller
     /// </summary>
     public class UserController : ControllerBase
     {
-        //Константа представляет имя документа для сериализации и десериализации.
-        private const string USERS_FILE_NAME = "users.dat";
-
         /// <summary>
         /// Список пользователей приложения.
         /// </summary>
@@ -83,7 +81,7 @@ namespace CodeBlogFitness.dll.Controller
         /// </summary>
         private void Save()
         {
-            base.Save(USERS_FILE_NAME, Users);
+            Save(Users);
         }
 
         /// <summary>
@@ -92,7 +90,7 @@ namespace CodeBlogFitness.dll.Controller
         /// <returns> Список пользователей. </returns>
         private  List<User> GetUserData()
         {
-            return base.Load<List<User>>(USERS_FILE_NAME) ?? new List<User>();
+            return Load<User>() ?? new List<User>();
         }
 
         #region Первоначальная реализация сериализации и десериализации без ControllerBAse

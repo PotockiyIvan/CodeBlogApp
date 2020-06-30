@@ -13,28 +13,34 @@ namespace CodeBlogFitness.dll.Model
     /// </summary>
     public class Food
     {
+        //Индентификатор для внедрения entity framework
+        public int Id { get; set; }
+
         #region Свойства
         /// <summary>
         /// Название продукта.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; set; }
         /// <summary>
         /// Белки.
         /// </summary>
-        public double Proteins { get; }
+        public double Proteins { get; set; }
         /// <summary>
         /// Жиры.
         /// </summary>
-        public double Fats { get; }
+        public double Fats { get; set; }
         /// <summary>
         /// Углеводы.
         /// </summary>
-        public double Carbohydrates { get; }
+        public double Carbohydrates { get; set; }
         /// <summary>
         /// Калории на 100г. продукта.
         /// </summary>
-        public double Callories { get; }
+        public double Callories { get; set; }
         #endregion
+
+        public virtual ICollection<Eating> Eatings { get; set; }
+        public Food() { }
 
         #region Приватные свойства нужные для рассчетов было решено заменить на деление в конструкторе
         ///// <summary>
